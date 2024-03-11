@@ -1,4 +1,4 @@
-from typing import Tuple, List, Union
+from typing import List, Tuple, Union
 
 import numpy as np
 from numba import njit
@@ -91,7 +91,9 @@ def _reshape_ndarray_to_list(x: np.ndarray) -> NumbaList[np.ndarray]:
         raise ValueError("x must be 1D, 2D or 3D")
 
 
-def _reshape_to_numba_list(X: Union[np.ndarray, List[np.ndarray]], name: str = "X") -> NumbaList[np.ndarray]:
+def _reshape_to_numba_list(
+    X: Union[np.ndarray, List[np.ndarray]], name: str = "X"
+) -> NumbaList[np.ndarray]:
     if isinstance(X, np.ndarray):
         return _reshape_ndarray_to_list(X)
     elif isinstance(X, List):

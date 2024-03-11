@@ -2,14 +2,17 @@
 
 __maintainer__ = ["codelionx"]
 
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 import numpy as np
+from distances._utils import (
+    _reshape_pairwise_single,
+    _reshape_to_numba_list,
+    reshape_pairwise_to_multiple,
+)
 from numba import njit, objmode
 from numba.typed import List as NumbaList
 from scipy.signal import correlate
-
-from distances._utils import reshape_pairwise_to_multiple, _reshape_pairwise_single, _reshape_to_numba_list
 
 from aeon.utils.conversion import convert_collection
 

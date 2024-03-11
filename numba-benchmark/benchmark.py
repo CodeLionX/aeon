@@ -4,12 +4,15 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-
 from distances import (
-    sbd_pairwise_distance_main, sbd_pairwise_distance_two_funcs, sbd_pairwise_distance_only_list,
+    msm_pairwise_distance_custom_only_list,
+    msm_pairwise_distance_main,
+    msm_pairwise_distance_only_list,
+    msm_pairwise_distance_two_func,
     sbd_pairwise_distance_custom_only_list,
-    msm_pairwise_distance_main, msm_pairwise_distance_two_func, msm_pairwise_distance_only_list,
-    msm_pairwise_distance_custom_only_list
+    sbd_pairwise_distance_main,
+    sbd_pairwise_distance_only_list,
+    sbd_pairwise_distance_two_funcs,
 )
 
 
@@ -35,10 +38,14 @@ def main():
     # - then, benchmark with 1000, 5000, up to 25000 of length 100
     rng = np.random.default_rng(42)
     distance_funcs = [
-        sbd_pairwise_distance_main, sbd_pairwise_distance_two_funcs, sbd_pairwise_distance_custom_only_list,
+        sbd_pairwise_distance_main,
+        sbd_pairwise_distance_two_funcs,
+        sbd_pairwise_distance_only_list,
         sbd_pairwise_distance_custom_only_list,
-        msm_pairwise_distance_main, msm_pairwise_distance_two_func, msm_pairwise_distance_only_list,
-        msm_pairwise_distance_custom_only_list
+        msm_pairwise_distance_main,
+        msm_pairwise_distance_two_func,
+        msm_pairwise_distance_only_list,
+        msm_pairwise_distance_custom_only_list,
     ]
     # max_timepoints_order = 5
     # timepoints_options = [int(10**i) for i in range(1, max_timepoints_order)]
@@ -79,14 +86,16 @@ def main():
             ts2 = rng.random((n_channels, n_timepoints))
             print(f"    input=({n_instances}, {n_channels}, {n_timepoints}): ", end="")
             best = _timeit(lambda: func(ts1, ts2))
-            results.append({
-                "distance": func.__name__,
-                "n_instances": n_instances,
-                "n_channels": n_channels,
-                "n_timepoints_min": n_timepoints,
-                "n_timepoints_max": n_timepoints,
-                "time": best
-            })
+            results.append(
+                {
+                    "distance": func.__name__,
+                    "n_instances": n_instances,
+                    "n_channels": n_channels,
+                    "n_timepoints_min": n_timepoints,
+                    "n_timepoints_max": n_timepoints,
+                    "time": best,
+                }
+            )
         pd.DataFrame(results).to_csv("numba-benchmark.bak.csv", index=False)
 
         for n_instances in instance_options:
@@ -96,31 +105,42 @@ def main():
             ts2 = rng.random((n_instances, n_channels, n_timepoints))
             print(f"    input=({n_instances}, {n_channels}, {n_timepoints}): ", end="")
             best = _timeit(lambda: func(ts1, ts2))
-            results.append({
-                "distance": func.__name__,
-                "n_instances": n_instances,
-                "n_channels": n_channels,
-                "n_timepoints_min": n_timepoints,
-                "n_timepoints_max": n_timepoints,
-                "time": best
-            })
+            results.append(
+                {
+                    "distance": func.__name__,
+                    "n_instances": n_instances,
+                    "n_channels": n_channels,
+                    "n_timepoints_min": n_timepoints,
+                    "n_timepoints_max": n_timepoints,
+                    "time": best,
+                }
+            )
 
         if _supports_nonequal_length(func):
             for n_instances in instance_options:
                 n_channels = 1
                 n_timepoints = 10
-                ts1 = [rng.random(n_timepoints + i%11 - 5) for i in range(n_instances)]
-                ts2 = [rng.random(n_timepoints + i%11 - 5) for i in range(n_instances)]
-                print(f"    input=({n_instances}, {{{n_timepoints-5}, {n_timepoints+5}}}): ", end="")
+                ts1 = [
+                    rng.random(n_timepoints + i % 11 - 5) for i in range(n_instances)
+                ]
+                ts2 = [
+                    rng.random(n_timepoints + i % 11 - 5) for i in range(n_instances)
+                ]
+                print(
+                    f"    input=({n_instances}, {{{n_timepoints-5}, {n_timepoints+5}}}): ",
+                    end="",
+                )
                 best = _timeit(lambda: func(ts1, ts2))
-                results.append({
-                    "distance": func.__name__,
-                    "n_instances": n_instances,
-                    "n_channels": n_channels,
-                    "n_timepoints_min": n_timepoints - 5,
-                    "n_timepoints_max": n_timepoints + 5,
-                    "time": best
-                })
+                results.append(
+                    {
+                        "distance": func.__name__,
+                        "n_instances": n_instances,
+                        "n_channels": n_channels,
+                        "n_timepoints_min": n_timepoints - 5,
+                        "n_timepoints_max": n_timepoints + 5,
+                        "time": best,
+                    }
+                )
         pd.DataFrame(results).to_csv("numba-benchmark.bak.csv", index=False)
 
     df = pd.DataFrame(results)
@@ -128,6 +148,5 @@ def main():
     print("...done.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-

@@ -1,13 +1,16 @@
-from typing import Union, List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
+from distances._utils import (
+    _reshape_pairwise_single,
+    _reshape_to_numba_list,
+    reshape_pairwise_to_multiple,
+)
 from numba import njit
 from numba.typed import List as NumbaList
 
 from aeon.distances._bounding_matrix import create_bounding_matrix
 from aeon.distances._squared import _univariate_squared_distance
-from distances._utils import reshape_pairwise_to_multiple, _reshape_pairwise_single, _reshape_to_numba_list
-
 from aeon.utils.conversion import convert_collection
 
 
@@ -126,16 +129,22 @@ def msm_pairwise_distance_only_list(
     if y is None:
         # To self
         if isinstance(X, List):
-            return _msm_pairwise_distance_list(NumbaList(X), window, independent, c, itakura_max_slope)
+            return _msm_pairwise_distance_list(
+                NumbaList(X), window, independent, c, itakura_max_slope
+            )
 
         if isinstance(X, np.ndarray):
             if X.ndim == 3:
                 _X: List[np.ndarray] = convert_collection(X, "np-list")
-                return _msm_pairwise_distance_list(NumbaList(_X), window, independent, c, itakura_max_slope)
+                return _msm_pairwise_distance_list(
+                    NumbaList(_X), window, independent, c, itakura_max_slope
+                )
             if X.ndim == 2:
                 _X: np.ndarray = X.reshape((X.shape[0], 1, X.shape[1]))
                 _X2: List[np.ndarray] = convert_collection(_X, "np-list")
-                return _msm_pairwise_distance_list(NumbaList(_X2), window, independent, c, itakura_max_slope)
+                return _msm_pairwise_distance_list(
+                    NumbaList(_X2), window, independent, c, itakura_max_slope
+                )
 
         raise ValueError("X must be 2D or 3D")
 
@@ -182,7 +191,9 @@ def msm_pairwise_distance_custom_only_list(
 
     if y is None:
         # To self
-        return _msm_pairwise_distance_custom_list(_X, window, independent, c, itakura_max_slope)
+        return _msm_pairwise_distance_custom_list(
+            _X, window, independent, c, itakura_max_slope
+        )
 
     _y = _reshape_to_numba_list(y, "y")
     return _msm_from_multiple_to_multiple_distance_custom_list(
