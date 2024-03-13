@@ -52,7 +52,7 @@ def main():
     timepoints_options = [10, 100, 1000, 10000, 25000]
     # max_instance_order = 3
     # instance_options = [int(10**i) for i in range(1, max_instance_order)]
-    instance_options = [1, 10, 100, 1000, 5000, 25000]
+    instance_options = [1, 10, 100, 1000, 5000]
 
     # warmup for Numba JIT
     print("Warming up Numba JIT...")

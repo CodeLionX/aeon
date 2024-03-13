@@ -1,0 +1,122 @@
+Warming up Numba JIT...                                                                                                                                                                                                                                                       
+...done.                                                                                                                                                                                                                                                                      
+Starting benchmark (univariate)...                                                                                                                                                                                                                                            
+  sbd_pairwise_distance_main:                                                                                                                                                                                                                                                 
+    input=(1, 2, 10): 500 loops, best of 3: 0.000410s per loop                                                                                                                                                                                                                
+    input=(1, 2, 100): 500 loops, best of 3: 0.000441s per loop                                                                                                                                                                                                               
+    input=(1, 2, 1000): 500 loops, best of 3: 0.000659s per loop                                                                                                                                                                                                              
+    input=(1, 2, 10000): 100 loops, best of 3: 0.003484s per loop                                                                                                                                                                                                             
+    input=(1, 2, 25000): 20 loops, best of 3: 0.019364s per loop                                                                                                                                                                                                              
+    input=(1, 1, 10): 2000 loops, best of 3: 0.000104s per loop                                                                                                                                                                                                               
+    input=(10, 1, 10): 50 loops, best of 3: 0.009921s per loop                                                                                                                                                                                                                
+    input=(100, 1, 10): 1 loops, best of 3: 0.991203s per loop                                                                                                                                                                                                                
+    input=(1000, 1, 10): 1 loops, best of 3: 99.867865s per loop                                                                                                                                                                                                              
+    input=(5000, 1, 10): 1 loops, best of 3: 2657.938537s per loop                                                                                                                                                                                                            
+  sbd_pairwise_distance_two_funcs:                                                                                                                                                                                                                                            
+    input=(1, 2, 10): 500 loops, best of 3: 0.000431s per loop                                                                                                                                                                                                                
+    input=(1, 2, 100): 500 loops, best of 3: 0.000469s per loop                                                                                                                                                                                                               
+    input=(1, 2, 1000): 500 loops, best of 3: 0.000698s per loop                                                                                                                                                                                                              
+    input=(1, 2, 10000): 100 loops, best of 3: 0.003642s per loop                                                                                                                                                                                                             
+    input=(1, 2, 25000): 20 loops, best of 3: 0.019424s per loop                                                                                                                                                                                                              
+    input=(1, 1, 10): 2000 loops, best of 3: 0.000117s per loop                                                                                                                                                                                                               
+    input=(10, 1, 10): 20 loops, best of 3: 0.010391s per loop                                                                                                                                                                                                                
+    input=(100, 1, 10): 1 loops, best of 3: 1.052151s per loop                                                                                                                                                                                                                
+    input=(1000, 1, 10): 1 loops, best of 3: 104.760533s per loop                                                                                                                                                                                                             
+    input=(5000, 1, 10): 1 loops, best of 3: 2508.442964s per loop                                                                                                                                                                                                            
+    input=(1, {5, 15}): 1000 loops, best of 3: 0.000269s per loop                                                                                                                                                                                                             
+    input=(10, {5, 15}): 20 loops, best of 3: 0.012207s per loop                                                                                                                                                                                                              
+    input=(100, {5, 15}): 1 loops, best of 3: 1.191218s per loop                                                                                                                                                                                                              
+    input=(1000, {5, 15}): 1 loops, best of 3: 145.205222s per loop                                                                                                                                                                                                           
+    input=(5000, {5, 15}): 1 loops, best of 3: 3832.831730s per loop                                                                                                                                                                                                          
+  sbd_pairwise_distance_only_list:                                                                                                                                                                                                                                            
+    input=(1, 2, 10): 500 loops, best of 3: 0.000681s per loop                                                                                                                                                                                                                
+    input=(1, 2, 100): 500 loops, best of 3: 0.000728s per loop                                                                                                                                                                                                               
+    input=(1, 2, 1000): 200 loops, best of 3: 0.001003s per loop                                                                                                                                                                                                              
+    input=(1, 2, 10000): 50 loops, best of 3: 0.004466s per loop                                                                                                                                                                                                              
+    input=(1, 2, 25000): 5 loops, best of 3: 0.024797s per loop                                                                                                                                                                                                               
+    input=(1, 1, 10): 500 loops, best of 3: 0.000472s per loop                                                                                                                                                                                                                
+    input=(10, 1, 10): 10 loops, best of 3: 0.019997s per loop                                                                                                                                                                                                                
+    input=(100, 1, 10): 1 loops, best of 3: 1.933750s per loop                                                                                                                                                                                                                
+    input=(1000, 1, 10): 1 loops, best of 3: 146.967096s per loop                                                                                                                                                                                                             
+    input=(5000, 1, 10): 1 loops, best of 3: 2640.795200s per loop                                                                                                                                                                                                            
+    input=(1, {5, 15}): 1000 loops, best of 3: 0.000242s per loop                                                                                                                                                                                                             
+    input=(10, {5, 15}): 20 loops, best of 3: 0.010919s per loop                                                                                                                                                                                                              
+    input=(100, {5, 15}): 1 loops, best of 3: 1.065274s per loop                                                                       
+    input=(1000, {5, 15}): 1 loops, best of 3: 106.500594s per loop                                                                    
+    input=(5000, {5, 15}): 1 loops, best of 3: 2607.016290s per loop                                                                   
+  sbd_pairwise_distance_custom_only_list:                          
+    input=(1, 2, 10): 1 loops, best of 3: 0.000466s per loop                                                                           
+    input=(1, 2, 100): 500 loops, best of 3: 0.000496s per loop                                                                        
+    input=(1, 2, 1000): 500 loops, best of 3: 0.000732s per loop                                                                       
+    input=(1, 2, 10000): 100 loops, best of 3: 0.003748s per loop                                                                      
+    input=(1, 2, 25000): 10 loops, best of 3: 0.022655s per loop                                                                       
+    input=(1, 1, 10): 2000 loops, best of 3: 0.000137s per loop                                                                        
+    input=(10, 1, 10): 20 loops, best of 3: 0.010484s per loop                                                                         
+    input=(100, 1, 10): 1 loops, best of 3: 1.048422s per loop                                                                         
+    input=(1000, 1, 10): 1 loops, best of 3: 104.472194s per loop                                                                      
+    input=(5000, 1, 10): 1 loops, best of 3: 2610.899612s per loop                                                                     
+    input=(1, {5, 15}): 1000 loops, best of 3: 0.000262s per loop                                                                      
+    input=(10, {5, 15}): 20 loops, best of 3: 0.010674s per loop                                                                       
+    input=(100, {5, 15}): 1 loops, best of 3: 1.035698s per loop                                                                       
+    input=(1000, {5, 15}): 1 loops, best of 3: 103.770760s per loop                                                                    
+    input=(5000, {5, 15}): 1 loops, best of 3: 2565.619846s per loop                                                                   
+  msm_pairwise_distance_main:                                      
+    input=(1, 2, 10): 1 loops, best of 3: 0.000010s per loop                                                                           
+    input=(1, 2, 100): 1000 loops, best of 3: 0.000353s per loop                                                                       
+    input=(1, 2, 1000): 5 loops, best of 3: 0.087435s per loop                                                                         
+    input=(1, 2, 10000): 1 loops, best of 3: 9.123596s per loop                                                                        
+    input=(1, 2, 25000): 1 loops, best of 3: 56.136399s per loop
+    input=(1, 1, 10): 100000 loops, best of 3: 0.000003s per loop
+    input=(10, 1, 10): 2000 loops, best of 3: 0.000122s per loop
+    input=(100, 1, 10): 20 loops, best of 3: 0.015651s per loop
+    input=(1000, 1, 10): 1 loops, best of 3: 1.566556s per loop
+    input=(5000, 1, 10): 1 loops, best of 3: 39.283521s per loop
+  msm_pairwise_distance_two_func:
+    input=(1, 2, 10): 50000 loops, best of 3: 0.000008s per loop
+    input=(1, 2, 100): 1000 loops, best of 3: 0.000362s per loop
+    input=(1, 2, 1000): 5 loops, best of 3: 0.086758s per loop
+    input=(1, 2, 10000): 1 loops, best of 3: 9.065751s per loop
+    input=(1, 2, 25000): 1 loops, best of 3: 56.023490s per loop
+    input=(1, 1, 10): 50000 loops, best of 3: 0.000004s per loop
+    input=(10, 1, 10): 2000 loops, best of 3: 0.000128s per loop
+    input=(100, 1, 10): 20 loops, best of 3: 0.015869s per loop
+    input=(1000, 1, 10): 1 loops, best of 3: 1.576702s per loop
+    input=(5000, 1, 10): 1 loops, best of 3: 39.204275s per loop
+    input=(1, {5, 15}): 5000 loops, best of 3: 0.000091s per loop
+    input=(10, {5, 15}): 1000 loops, best of 3: 0.000327s per loop
+    input=(100, {5, 15}): 10 loops, best of 3: 0.020207s per loop
+    input=(1000, {5, 15}): 1 loops, best of 3: 1.930386s per loop
+    input=(5000, {5, 15}): 1 loops, best of 3: 48.175805s per loop
+  msm_pairwise_distance_only_list:
+    input=(1, 2, 10): 2000 loops, best of 3: 0.000110s per loop
+    input=(1, 2, 100): 500 loops, best of 3: 0.000492s per loop
+    input=(1, 2, 1000): 5 loops, best of 3: 0.087109s per loop
+    input=(1, 2, 10000): 1 loops, best of 3: 9.283551s per loop
+    input=(1, 2, 25000): 1 loops, best of 3: 57.138200s per loop
+    input=(1, 1, 10): 5000 loops, best of 3: 0.000099s per loop
+    input=(10, 1, 10): 1000 loops, best of 3: 0.000315s per loop
+    input=(100, 1, 10): 20 loops, best of 3: 0.017770s per loop
+    input=(1000, 1, 10): 1 loops, best of 3: 1.715939s per loop
+    input=(5000, 1, 10): 1 loops, best of 3: 42.846870s per loop
+    input=(1, {5, 15}): 5000 loops, best of 3: 0.000092s per loop
+    input=(10, {5, 15}): 1000 loops, best of 3: 0.000327s per loop
+    input=(100, {5, 15}): 10 loops, best of 3: 0.020367s per loop
+    input=(1000, {5, 15}): 1 loops, best of 3: 1.936383s per loop
+    input=(5000, {5, 15}): 1 loops, best of 3: 48.058016s per loop
+  msm_pairwise_distance_custom_only_list:
+    input=(1, 2, 10): 20000 loops, best of 3: 0.000019s per loop
+    input=(1, 2, 100): 1000 loops, best of 3: 0.000367s per loop
+    input=(1, 2, 1000): 5 loops, best of 3: 0.086069s per loop
+    input=(1, 2, 10000): 1 loops, best of 3: 9.155539s per loop
+    input=(1, 2, 25000): 1 loops, best of 3: 55.996540s per loop
+    input=(1, 1, 10): 20000 loops, best of 3: 0.000015s per loop
+    input=(10, 1, 10): 2000 loops, best of 3: 0.000158s per loop
+    input=(100, 1, 10): 20 loops, best of 3: 0.017064s per loop
+    input=(1000, 1, 10): 1 loops, best of 3: 1.698119s per loop
+    input=(5000, 1, 10): 1 loops, best of 3: 42.347774s per loop
+    input=(1, {5, 15}): 2000 loops, best of 3: 0.000115s per loop
+    input=(10, {5, 15}): 1000 loops, best of 3: 0.000358s per loop
+    input=(100, {5, 15}): 20 loops, best of 3: 0.018916s per loop
+    input=(1000, {5, 15}): 1 loops, best of 3: 1.807275s per loop
+    input=(5000, {5, 15}): 1 loops, best of 3: 44.858721s per loop
+...done.
