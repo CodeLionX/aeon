@@ -68,7 +68,7 @@ def _reshape_single(x: np.ndarray) -> np.ndarray:
     elif x.ndim == 1:
         return x.reshape((1, x.shape[0]))
     else:
-        raise ValueError("x and y must be 1D or 2D arrays")
+        raise ValueError("x must be 1D or 2D arrays")
 
 
 @njit(cache=True, fastmath=True)
@@ -96,7 +96,33 @@ def _reshape_to_numba_list(
 ) -> NumbaList[np.ndarray]:
     if isinstance(X, np.ndarray):
         return _reshape_ndarray_to_list(X)
-    elif isinstance(X, List):
+    elif isinstance(X, (List, NumbaList)):
         return _reshape_all_in_list(NumbaList(X))
+    else:
+        raise ValueError(f"{name} must be either np.ndarray or List[np.ndarray]")
+
+
+def _reshape_to_numba_list_unjit(
+    X: Union[np.ndarray, List[np.ndarray]], name: str = "X"
+) -> NumbaList[np.ndarray]:
+    if isinstance(X, np.ndarray):
+        if X.ndim == 3:
+            return NumbaList(X)
+        elif X.ndim == 2:
+            return NumbaList(X.reshape(X.shape[0], 1, X.shape[1]))
+        elif X.ndim == 1:
+            return NumbaList(X.reshape(1, 1, -1))
+        else:
+            raise ValueError(f"{name} must be 1D, 2D or 3D")
+    elif isinstance(X, (List, NumbaList)):
+        X_new = NumbaList()
+        for i in range(len(X)):
+            if X[i].ndim == 2:
+                X_new.append(X[i])
+            elif X[i].ndim == 1:
+                X_new.append(X[i].reshape((1, X[i].shape[0])))
+            else:
+                raise ValueError(f"{name} must include only 1D or 2D arrays")
+        return X_new
     else:
         raise ValueError(f"{name} must be either np.ndarray or List[np.ndarray]")

@@ -9,10 +9,13 @@ from distances import (
     msm_pairwise_distance_main,
     msm_pairwise_distance_only_list,
     msm_pairwise_distance_two_func,
+    msm_pairwise_distance_custom_unjit,
     sbd_pairwise_distance_custom_only_list,
     sbd_pairwise_distance_main,
     sbd_pairwise_distance_only_list,
     sbd_pairwise_distance_two_funcs,
+    sbd_pairwise_distance_custom_unjit,
+    sbd_pairwise_distance_convolve
 )
 
 
@@ -38,14 +41,17 @@ def main():
     # - then, benchmark with 1000, 5000, up to 25000 of length 100
     rng = np.random.default_rng(42)
     distance_funcs = [
-        sbd_pairwise_distance_main,
-        sbd_pairwise_distance_two_funcs,
-        sbd_pairwise_distance_only_list,
-        sbd_pairwise_distance_custom_only_list,
-        msm_pairwise_distance_main,
-        msm_pairwise_distance_two_func,
-        msm_pairwise_distance_only_list,
-        msm_pairwise_distance_custom_only_list,
+        # sbd_pairwise_distance_main,
+        # sbd_pairwise_distance_two_funcs,
+        # sbd_pairwise_distance_only_list,
+        # sbd_pairwise_distance_custom_only_list,
+        sbd_pairwise_distance_custom_unjit,
+        # sbd_pairwise_distance_convolve,
+        # msm_pairwise_distance_main,
+        # msm_pairwise_distance_two_func,
+        # msm_pairwise_distance_only_list,
+        # msm_pairwise_distance_custom_only_list,
+        msm_pairwise_distance_custom_unjit,
     ]
     # max_timepoints_order = 5
     # timepoints_options = [int(10**i) for i in range(1, max_timepoints_order)]

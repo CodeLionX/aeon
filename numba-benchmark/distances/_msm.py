@@ -5,6 +5,7 @@ from distances._utils import (
     _reshape_pairwise_single,
     _reshape_to_numba_list,
     reshape_pairwise_to_multiple,
+    _reshape_to_numba_list_unjit
 )
 from numba import njit
 from numba.typed import List as NumbaList
@@ -196,6 +197,28 @@ def msm_pairwise_distance_custom_only_list(
         )
 
     _y = _reshape_to_numba_list(y, "y")
+    return _msm_from_multiple_to_multiple_distance_custom_list(
+        _X, _y, window, independent, c, itakura_max_slope
+    )
+
+
+def msm_pairwise_distance_custom_unjit(
+    X: Union[np.ndarray, List[np.ndarray]],
+    y: Optional[Union[np.ndarray, List[np.ndarray]]] = None,
+    window: float = None,
+    independent: bool = True,
+    c: float = 1.0,
+    itakura_max_slope: float = None,
+) -> np.ndarray:
+    _X = _reshape_to_numba_list_unjit(X, "X")
+
+    if y is None:
+        # To self
+        return _msm_pairwise_distance_custom_list(
+            _X, window, independent, c, itakura_max_slope
+        )
+
+    _y = _reshape_to_numba_list_unjit(y, "y")
     return _msm_from_multiple_to_multiple_distance_custom_list(
         _X, _y, window, independent, c, itakura_max_slope
     )

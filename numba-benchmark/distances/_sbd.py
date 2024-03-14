@@ -4,11 +4,13 @@ __maintainer__ = ["codelionx"]
 
 from typing import List, Optional, Union
 
+import numba
 import numpy as np
 from distances._utils import (
     _reshape_pairwise_single,
     _reshape_to_numba_list,
     reshape_pairwise_to_multiple,
+    _reshape_to_numba_list_unjit
 )
 from numba import njit, objmode
 from numba.typed import List as NumbaList
@@ -146,6 +148,125 @@ def sbd_pairwise_distance_custom_only_list(
     return _sbd_pairwise_distance_custom_list(_X, _y, standardize)
 
 
+def sbd_pairwise_distance_custom_unjit(
+    X: Union[np.ndarray, List[np.ndarray]],
+    y: Optional[Union[np.ndarray, List[np.ndarray]]] = None,
+    standardize: bool = True,
+) -> np.ndarray:
+    _X = _reshape_to_numba_list_unjit(X, "X")
+
+    if y is None:
+        # To self
+        return _sbd_pairwise_distance_single_custom_list(_X, standardize)
+
+    _y = _reshape_to_numba_list_unjit(y, "y")
+    return _sbd_pairwise_distance_custom_list(_X, _y, standardize)
+
+
+def sbd_pairwise_distance_convolve(
+    X: Union[np.ndarray, List[np.ndarray]],
+    y: Optional[Union[np.ndarray, List[np.ndarray]]] = None,
+    standardize: bool = True,
+) -> np.ndarray:
+    _X = _reshape_to_numba_list(X, "X")
+
+    if y is None:
+        # To self
+        return _sbd_pairwise_distance_single_convolve(_X, standardize)
+
+    _y = _reshape_to_numba_list(y, "y")
+    return _sbd_pairwise_distance_convolve(_X, _y, standardize)
+
+
+@njit(cache=True, fastmath=True)
+def _sbd_pairwise_distance_single_convolve(
+    x: NumbaList[np.ndarray], standardize: bool
+) -> np.ndarray:
+    n_instances = len(x)
+    distances = np.zeros((n_instances, n_instances))
+
+    skip_list = NumbaList()
+    if standardize:
+        for i in range(n_instances):
+            if x[i].size == 1:
+                skip_list.append(i)
+            else:
+                x[i] = (x[i] - np.mean(x[i])) / np.std(x[i])
+
+    for i in range(n_instances):
+        for j in range(i + 1, n_instances):
+            if i in skip_list or j in skip_list:
+                continue
+            distances[i, j] = _pairwise_sbd_distance(x[i], x[j])
+            distances[j, i] = distances[i, j]
+    return distances
+
+
+@njit(cache=True, fastmath=True)
+def _sbd_pairwise_distance_convolve(
+    x: NumbaList[np.ndarray], y: NumbaList[np.ndarray], standardize: bool
+) -> np.ndarray:
+    n_instances = len(x)
+    m_instances = len(y)
+    if n_instances < m_instances:
+        n_instances, m_instances = m_instances, n_instances
+        x, y = y, x
+    distances = np.zeros((n_instances, m_instances))
+
+    skip_list_i = NumbaList()
+    skip_list_j = NumbaList()
+    if standardize:
+        for i in range(m_instances):
+            if x[i].size == 1:
+                skip_list_i.append(i)
+            else:
+                x[i] = (x[i] - np.mean(x[i])) / np.std(x[i])
+            if y[i].size == 1:
+                skip_list_j.append(i)
+            else:
+                y[i] = (y[i] - np.mean(y[i])) / np.std(y[i])
+        for i in range(m_instances, n_instances):
+            if x[i].size == 1:
+                skip_list_i.append(i)
+            else:
+                x[i] = (x[i] - np.mean(x[i])) / np.std(x[i])
+    for i in range(n_instances):
+        if i in skip_list_i:
+            continue
+        for j in range(m_instances):
+            if j in skip_list_j:
+                continue
+            distances[i, j] = _pairwise_sbd_distance(x[i], y[j])
+    return distances
+
+
+@njit(cache=True, fastmath=True)
+def _pairwise_sbd_distance(x: np.ndarray, y: np.ndarray) -> float:
+    x = x.astype(np.float64)
+    y = y.astype(np.float64)
+
+    if x.ndim == 1 and y.ndim == 1:
+        _x, _y = x.ravel(), y.ravel()  # to force Numba to infer the correct type
+    elif x.ndim == 2 and y.ndim == 2:
+        if x.shape[0] == y.shape[0] == 1:
+            _x, _y = x.ravel(), y.ravel()
+        else:
+            # independent
+            nchannels = min(x.shape[0], y.shape[0])
+            distance = 0.0
+            for i in range(nchannels):
+                a = np.convolve(x[i], y[i][::-1].conj())
+                b = np.sqrt(np.dot(x[i], x[i]) * np.dot(y[i], y[i]))
+                distance += np.abs(1.0 - np.max(a / b))
+            return distance / nchannels
+    else:
+        raise ValueError("x and y must be 1D or 2D")
+
+    a = np.convolve(_x, _y[::-1].conj())
+    b = np.sqrt(np.dot(_x, _x) * np.dot(_y, _y))
+    return np.abs(1.0 - np.max(a / b))
+
+
 @njit(cache=True, fastmath=True)
 def _sbd_pairwise_distance_single(x: np.ndarray, standardize: bool) -> np.ndarray:
     n_instances = x.shape[0]
@@ -231,6 +352,21 @@ def _sbd_pairwise_distance_custom_list(
 
 
 @njit(cache=True, fastmath=True)
+def _reverse_and_conj(x: np.ndarray) -> np.ndarray:
+    if x.ndim == 1:
+        return x[::-1].conj()
+    elif x.ndim == 2:
+        return x[::-1, ::-1].conj()
+    elif x.ndim == 3:
+        return x[::-1, ::-1, ::-1].conj()
+    else:
+        raise NotImplementedError(
+            "reverse_and_conj ist not implemented for arrays of "
+            "dimensionality 4 or larger!"
+        )
+
+
+@njit(cache=True, fastmath=True)
 def sbd_distance(x: np.ndarray, y: np.ndarray, standardize: bool = True) -> float:
     if x.ndim == 1 and y.ndim == 1:
         return _univariate_sbd_distance(x, y, standardize)
@@ -259,12 +395,8 @@ def _univariate_sbd_distance(x: np.ndarray, y: np.ndarray, standardize: bool) ->
         if x.size == 1 or y.size == 1:
             return 0.0
 
-    try:
         x = (x - np.mean(x)) / np.std(x)
         y = (y - np.mean(y)) / np.std(y)
-    except Exception:
-        print("Zero division error", x, y)
-        raise ZeroDivisionError()
 
     with objmode(a="float64[:]"):
         a = correlate(x, y, method="fft")
